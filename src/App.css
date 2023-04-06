@@ -35,7 +35,15 @@ html, body {
   margin-top: 30px;
 }
 
-.heroes-row {
-  height: 500px;
+.not-found-page * {
+  margin: 0;
+}
+.not-found-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-size: 300%;
+  height: 100vh;
 
 }

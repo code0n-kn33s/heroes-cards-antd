@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Col, Divider, Row, Pagination } from 'antd';
@@ -13,33 +13,35 @@ export function ListHeroes({ fetchHeroes, listHeroes }) {
     heroes: []
   })
 
-  useEffect(() => {
-    if (!listHeroes.length) fetchHeroes()
-
-    if (listHeroes.length) {
-      setPageConfig({
-        ...pageConfig,
-        heroes: findPageItems(listHeroes),
-        total: Math.ceil(listHeroes.length / pageConfig.maxItems)
-      })
-    }
-  }, [listHeroes, pageConfig.currentPage])
-
-  const navigate = useNavigate()
-
-  const cardClicked = (id, name) => e => navigate(`${id}/${name}`)
-
-  const findPageItems = (listItems) => {
+  const memoised = useCallback(() => {
     const maxItems = pageConfig.maxItems
     const currentPage = pageConfig.currentPage
 
     const large = maxItems * currentPage
     const less = (currentPage - 1) * maxItems - 1
 
-    return listItems.filter((e, i) => (i < large && i > less))
-  }
+    return listHeroes.filter((e, i) => (i < large && i > less))
+  }, [listHeroes, pageConfig.maxItems, pageConfig.currentPage])
 
-  const paginationChange = (page) => setPageConfig({...pageConfig, currentPage: page})
+  useEffect(() => {
+    if (listHeroes.length) {
+      setPageConfig({
+        ...pageConfig,
+        heroes: memoised(),
+        total: Math.ceil(listHeroes.length / pageConfig.maxItems),
+      })
+    } else {
+      fetchHeroes()
+    }
+  }, [ listHeroes, pageConfig.currentPage, memoised, listHeroes ])
+
+  const navigate = useNavigate()
+
+  const cardClicked = (id, name) => e =>
+    navigate(`${id}/${name}`)
+
+  const paginationChange = (page) =>
+    setPageConfig({...pageConfig, currentPage: page})
 
   return (
     <div className="heroes">
@@ -71,7 +73,6 @@ export function ListHeroes({ fetchHeroes, listHeroes }) {
 
       <Pagination
         defaultCurrent={1}
-        // total={Math.ceil(listHeroes.length / pageConfig.maxItems)}
         total={pageConfig.total}
         defaultPageSize={pageConfig.currentPage}
         onChange={paginationChange}

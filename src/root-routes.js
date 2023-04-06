@@ -1,7 +1,7 @@
 import App from './App';
 import { Main } from './Main';
 import { Heroes, HeroesCard } from './Heroes';
-
+import { NotFound } from './Components';
 const routes = [
     {
         path: '/',
@@ -17,6 +17,9 @@ const routes = [
                 element: <HeroesCard/>
             }
         ]
+    }, {
+        path: "*",
+        element: <NotFound/>
     }
 ]
 
