@@ -45,5 +45,9 @@ html, body {
   flex-direction: column;
   font-size: 300%;
   height: 100vh;
+}
 
+.ant-typography mark {
+  white-space: nowrap;
+  margin-right: 20px;
 }

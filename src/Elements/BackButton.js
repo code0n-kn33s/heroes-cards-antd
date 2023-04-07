@@ -14,7 +14,7 @@ export function BackButton() {
 
   return (
     <Button
-        type="primary"
+        type="dashed"
         shape="circle"
         icon={<ArrowLeftOutlined />}
         onClick={goBack}
